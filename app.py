@@ -48,11 +48,20 @@ class Game:
     def create_player(self, name, position):
         return Player(self.BB, self.stack, name, self.create_hand, position)
 
+    def add_players(self, *pls):
+        for x in range(len(pls)):
+            self.add_player(pls[x])
+
     def add_player(self, who):
         self.players.append(who)
 
+    @property
+    def create_ais(self):
+        for x in range(len(self.players)):
+            self.players[x] = self.create_ai(f'AI0{x}', x)
+
     def create_ai(self, name, position):
-        return AI(self.BB, self.stack, name, self.create_hand, position)
+        return AI(self.BB, self.stack, name, self.create_hand, position, self)
 
     @property
     def winner(self):  # Decides who wins
@@ -81,12 +90,40 @@ class Game:
     @property
     def start_round(self):
         for x in range(len(self.players)):
+            self.players[x].action = True
             if self.players[x].position == 1:
                 self.players[x].stack -= self.SB
                 self.pot += self.SB
             if self.players[x].position == 2:
                 self.players[x].stack -= self.BB
                 self.pot += self.BB
+
+    @property
+    def preflop_round(self):
+        for y in range(len(self.players)):
+            if self.players[y].position == 3:
+                self.players[y].preflop
+                break
+        for y in range(len(self.players)):
+            if self.players[y].position == 4:
+                self.players[y].preflop
+                break
+        for y in range(len(self.players)):
+            if self.players[y].position == 5:
+                self.players[y].preflop
+                break
+        for y in range(len(self.players)):
+            if self.players[y].position == 0:
+                self.players[y].preflop
+                break
+        for y in range(len(self.players)):
+            if self.players[y].position == 1:
+                self.players[y].preflop
+                break
+        for y in range(len(self.players)):
+            if self.players[y].position == 2:
+                self.players[y].preflop
+                break
 
     @property
     def checking(self):
@@ -117,15 +154,17 @@ class Game:
 
     @property
     def folding(self):
-        pass
+        self.action = False
 
 
 class Player(Game):
-    def __init__(self, BB, stack, name, hand, position):
+    def __init__(self, BB, stack, name, hand, position, game):
         super().__init__(BB, stack)
         self.name = name
         self.hand = hand
         self.position = position
+        self.game = game
+        self.action = False
         self.start_hand = tuple(hand)
         self.next = None
         self.hand_power = []
@@ -319,284 +358,314 @@ class Player(Game):
 
 
 class AI(Player):
-    def __init__(self, BB, stack, name, hand, position):
-        super().__init__(BB, stack, name, hand, position)
+    def __init__(self, BB, stack, name, hand, position, game):
+        super().__init__(BB, stack, name, hand, position, game)
 
-    def preflop(self, game):
-        if game.raise_amt == game.BB:
+    @property
+    def preflop(self):
+        if self.game.raise_amt == self.game.BB:
             if self.position == 3:
-                if self.hand[0][0] == self.hand[1][0]:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 14 and self.hand[1][0] >= 10:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.raising(self, 3*self.BB)
-                    elif self.hand[1][0] >= 11:
-                        game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 13 and self.hand[1][0] >= 12:
-                    game.raising(self, 3*self.BB)
-                else:
-                    game.folding
-            elif self.position == 4:
-                if self.hand[0][0] == self.hand[1][0]:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 14 and self.hand[1][0] >= 10:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 13 and self.hand[1][0] >= 11:
-                    game.raising(self, 3*self.BB)
-                else:
-                    game.folding
-            elif self.position == 5:
-                if self.hand[0][0] == self.hand[1][0]:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 14 and self.hand[1][0] >= 6:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.raising(self, 3*self.BB)
-                    elif self.hand[1][0] >= 9:
-                        game.raising(self, 3*self.BB)
-                elif self.hand[0][0] >= 10 and self.hand[1][0] >= 9:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 10 and self.hand[1][0] == 8:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 6 and self.hand[1][0] == 5:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 9 and self.hand[1][0] == 8:
-                    game.raising(self, 3*self.BB)
-                else:
-                    game.folding
-            elif self.position == 0:
-                if self.hand[0][0] == self.hand[1][0]:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 14:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] >= 11 and self.hand[1][0] >= 7:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.raising(self, 3*self.BB)
-                    elif self.hand[1][0] >= 8:
-                        game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 10 and self.hand[1][0] >= 8:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 5 and self.hand[1][0] == 4:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 6 and self.hand[1][0] == 5:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 9 and self.hand[1][0] >= 7:
-                    game.raising(self, 3*self.BB)
-                else:
-                    game.folding
-            elif self.position == 1:
-                if self.hand[0][0] == self.hand[1][0]:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 14 and self.hand[1][0] >= 6:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.raising(self, 3*self.BB)
-                    elif self.hand[1][0] >= 10:
-                        game.raising(self, 3*self.BB)
-                    elif self.hand[0][0] >= 10 and self.hand[1][0] >= 9:
-                        if self.hand[0][1] == self.hand[1][1]:
-                            game.raising(self, 3*self.BB)
-                    elif self.hand[0][0] >= 11:
-                        game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 11 and self.hand[1][0] == 8:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 9 and self.hand[1][0] == 8:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.raising(self, 3*self.BB)
-                else:
-                    game.folding
-            elif self.position == 2:
-                if self.hand[0][0] == self.hand[1][0]:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 14:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] >= 11 and self.hand[1][0] >= 7:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.raising(self, 3*self.BB)
-                    elif self.hand[1][0] >= 8:
-                        game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 10 and self.hand[1][0] >= 8:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 5 and self.hand[1][0] == 4:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 6 and self.hand[1][0] == 5:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
-                    game.raising(self, 3*self.BB)
-                elif self.hand[0][0] == 9 and self.hand[1][0] >= 7:
-                    game.raising(self, 3*self.BB)
-                else:
-                    game.folding
-            else:
-                print('Wrong position')
-        elif game.raise_amt == 3*game.BB:
+                self.UTG_Raise
+            if self.position == 4:
+                self.MP_Raise
+            if self.position == 5:
+                self.Cut_Off_Raise
+            if self.position == 0:
+                self.Button_Raise
+            if self.position == 1:
+                self.Small_Blind_Raise
+            if self.position == 2:
+                self.Big_Blind_Raise
+        if self.game.raise_amt == self.game.BB*3:
             if self.position == 3:
-                if self.hand[0][0] == self.hand[1][0]:
-                    game.calling(self)
-                elif self.hand[0][0] == 14 and self.hand[1][0] >= 10:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.calling(self)
-                    elif self.hand[1][0] >= 11:
-                        game.calling(self)
-                elif self.hand[0][0] == 13 and self.hand[1][0] >= 12:
-                    game.calling(self)
-                else:
-                    game.folding
-            elif self.position == 4:
-                if self.hand[0][0] == self.hand[1][0]:
-                    game.calling(self)
-                elif self.hand[0][0] == 14 and self.hand[1][0] >= 10:
-                    game.calling(self)
-                elif self.hand[0][0] == 13 and self.hand[1][0] >= 11:
-                    game.calling(self)
-                else:
-                    game.folding
-            elif self.position == 5:
-                if self.hand[0][0] == self.hand[1][0]:
-                    game.calling(self)
-                elif self.hand[0][0] == 14 and self.hand[1][0] >= 6:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.calling(self)
-                    elif self.hand[1][0] >= 9:
-                        game.calling(self)
-                elif self.hand[0][0] >= 10 and self.hand[1][0] >= 9:
-                    game.calling(self)
-                elif self.hand[0][0] == 10 and self.hand[1][0] == 8:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.calling(self)
-                elif self.hand[0][0] == 6 and self.hand[1][0] == 5:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.calling(self)
-                elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.calling(self)
-                elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
-                    game.calling(self)
-                elif self.hand[0][0] == 9 and self.hand[1][0] == 8:
-                    game.calling(self)
-                else:
-                    game.folding
-            elif self.position == 0:
-                if self.hand[0][0] == self.hand[1][0]:
-                    game.calling(self)
-                elif self.hand[0][0] == 14:
-                    game.calling(self)
-                elif self.hand[0][0] >= 11 and self.hand[1][0] >= 7:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.calling(self)
-                    elif self.hand[1][0] >= 8:
-                        game.calling(self)
-                elif self.hand[0][0] == 10 and self.hand[1][0] >= 8:
-                    game.calling(self)
-                elif self.hand[0][0] == 5 and self.hand[1][0] == 4:
-                    game.calling(self)
-                elif self.hand[0][0] == 6 and self.hand[1][0] == 5:
-                    game.calling(self)
-                elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
-                    game.calling(self)
-                elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
-                    game.calling(self)
-                elif self.hand[0][0] == 9 and self.hand[1][0] >= 7:
-                    game.calling(self)
-                else:
-                    game.folding
-            elif self.position == 1:
-                if self.hand[0][0] == self.hand[1][0]:
-                    game.calling(self)
-                elif self.hand[0][0] == 14 and self.hand[1][0] >= 6:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.calling(self)
-                    elif self.hand[1][0] >= 10:
-                        game.calling(self)
-                elif self.hand[0][0] >= 10 and self.hand[1][0] >= 9:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.calling(self)
-                    elif self.hand[0][0] >= 11:
-                        game.calling(self)
-                elif self.hand[0][0] == 11 and self.hand[1][0] == 8:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.calling(self)
-                elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.calling(self)
-                elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.calling(self)
-                elif self.hand[0][0] == 9 and self.hand[1][0] == 8:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.calling(self)
-                else:
-                    game.folding
-            elif self.position == 2:
-                if self.hand[0][0] == self.hand[1][0]:
-                    game.calling(self)
-                elif self.hand[0][0] == 14:
-                    game.calling(self)
-                elif self.hand[0][0] >= 11 and self.hand[1][0] >= 7:
-                    if self.hand[0][1] == self.hand[1][1]:
-                        game.calling(self)
-                    elif self.hand[1][0] >= 8:
-                        game.calling(self)
-                elif self.hand[0][0] == 10 and self.hand[1][0] >= 8:
-                    game.calling(self)
-                elif self.hand[0][0] == 5 and self.hand[1][0] == 4:
-                    game.calling(self)
-                elif self.hand[0][0] == 6 and self.hand[1][0] == 5:
-                    game.calling(self)
-                elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
-                    game.calling(self)
-                elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
-                    game.calling(self)
-                elif self.hand[0][0] == 9 and self.hand[1][0] >= 7:
-                    game.calling(self)
-                else:
-                    game.folding
-            else:
-                print('Wrong position')
+                self.UTG_Call
+            if self.position == 4:
+                self.MP_Call
+            if self.position == 5:
+                self.Cut_Off_Call
+            if self.position == 0:
+                self.Button_Call
+            if self.position == 1:
+                self.Small_Blind_Call
+            if self.position == 2:
+                self.Big_Blind_Call
+
+    @property
+    def UTG_Raise(self):
+        if self.hand[0][0] == self.hand[1][0]:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 14 and self.hand[1][0] >= 10:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.raising(self, 3*self.BB)
+        elif self.hand[1][0] >= 11:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 13 and self.hand[1][0] >= 12:
+            self.game.raising(self, 3*self.BB)
+        else:
+            self.game.folding
+
+    @property
+    def MP_Raise(self):
+        if self.hand[0][0] == self.hand[1][0]:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 14 and self.hand[1][0] >= 10:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 13 and self.hand[1][0] >= 11:
+            self.game.raising(self, 3*self.BB)
+        else:
+            self.game.folding
+
+    @property
+    def Cut_Off_Raise(self):
+        if self.hand[0][0] == self.hand[1][0]:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 14 and self.hand[1][0] >= 6:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.raising(self, 3*self.BB)
+            elif self.hand[1][0] >= 9:
+                self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] >= 10 and self.hand[1][0] >= 9:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 10 and self.hand[1][0] == 8:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 6 and self.hand[1][0] == 5:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 9 and self.hand[1][0] == 8:
+            self.game.raising(self, 3*self.BB)
+        else:
+            self.game.folding
+
+    @property
+    def Button_Raise(self):
+        if self.hand[0][0] == self.hand[1][0]:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 14:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] >= 11 and self.hand[1][0] >= 7:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.raising(self, 3*self.BB)
+            elif self.hand[1][0] >= 8:
+                self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 10 and self.hand[1][0] >= 8:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 5 and self.hand[1][0] == 4:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 6 and self.hand[1][0] == 5:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 9 and self.hand[1][0] >= 7:
+            self.game.raising(self, 3*self.BB)
+        else:
+            self.game.folding
+
+    @property
+    def Small_Blind_Raise(self):
+        if self.hand[0][0] == self.hand[1][0]:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 14 and self.hand[1][0] >= 6:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.raising(self, 3*self.BB)
+            elif self.hand[1][0] >= 10:
+                self.game.raising(self, 3*self.BB)
+            elif self.hand[0][0] >= 10 and self.hand[1][0] >= 9:
+                if self.hand[0][1] == self.hand[1][1]:
+                    self.game.raising(self, 3*self.BB)
+            elif self.hand[0][0] >= 11:
+                self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 11 and self.hand[1][0] == 8:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 9 and self.hand[1][0] == 8:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.raising(self, 3*self.BB)
+        else:
+            self.game.folding
+
+    @property
+    def Big_Blind_Raise(self):
+        if self.hand[0][0] == self.hand[1][0]:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 14:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] >= 11 and self.hand[1][0] >= 7:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.raising(self, 3*self.BB)
+            elif self.hand[1][0] >= 8:
+                self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 10 and self.hand[1][0] >= 8:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 5 and self.hand[1][0] == 4:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 6 and self.hand[1][0] == 5:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
+            self.game.raising(self, 3*self.BB)
+        elif self.hand[0][0] == 9 and self.hand[1][0] >= 7:
+            self.game.raising(self, 3*self.BB)
+        else:
+            self.game.folding
+
+    @property
+    def UTG_Call(self):
+        if self.hand[0][0] == self.hand[1][0]:
+            self.game.calling(self)
+        elif self.hand[0][0] == 14 and self.hand[1][0] >= 10:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.calling(self)
+            elif self.hand[1][0] >= 11:
+                self.game.calling(self)
+        elif self.hand[0][0] == 13 and self.hand[1][0] >= 12:
+            self.game.calling(self)
+        else:
+            self.game.folding
+
+    @property
+    def MP_Call(self):
+        if self.hand[0][0] == self.hand[1][0]:
+            self.game.calling(self)
+        elif self.hand[0][0] == 14 and self.hand[1][0] >= 10:
+            self.game.calling(self)
+        elif self.hand[0][0] == 13 and self.hand[1][0] >= 11:
+            self.game.calling(self)
+        else:
+            self.game.folding
+
+    @property
+    def Cut_Off_Call(self):
+        if self.hand[0][0] == self.hand[1][0]:
+            self.game.calling(self)
+        elif self.hand[0][0] == 14 and self.hand[1][0] >= 6:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.calling(self)
+            elif self.hand[1][0] >= 9:
+                self.game.calling(self)
+        elif self.hand[0][0] >= 10 and self.hand[1][0] >= 9:
+            self.game.calling(self)
+        elif self.hand[0][0] == 10 and self.hand[1][0] == 8:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.calling(self)
+        elif self.hand[0][0] == 6 and self.hand[1][0] == 5:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.calling(self)
+        elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.calling(self)
+        elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
+            self.game.calling(self)
+        elif self.hand[0][0] == 9 and self.hand[1][0] == 8:
+            self.game.calling(self)
+        else:
+            self.game.folding
+
+    @property
+    def Button_Call(self):
+        if self.hand[0][0] == self.hand[1][0]:
+            self.game.calling(self)
+        elif self.hand[0][0] == 14:
+            self.game.calling(self)
+        elif self.hand[0][0] >= 11 and self.hand[1][0] >= 7:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.calling(self)
+            elif self.hand[1][0] >= 8:
+                self.game.calling(self)
+        elif self.hand[0][0] == 10 and self.hand[1][0] >= 8:
+            self.game.calling(self)
+        elif self.hand[0][0] == 5 and self.hand[1][0] == 4:
+            self.game.calling(self)
+        elif self.hand[0][0] == 6 and self.hand[1][0] == 5:
+            self.game.calling(self)
+        elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
+            self.game.calling(self)
+        elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
+            self.game.calling(self)
+        elif self.hand[0][0] == 9 and self.hand[1][0] >= 7:
+            self.game.calling(self)
+        else:
+            self.game.folding
+
+    @property
+    def Small_Blind_Call(self):
+        if self.hand[0][0] == self.hand[1][0]:
+            self.game.calling(self)
+        elif self.hand[0][0] == 14 and self.hand[1][0] >= 6:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.calling(self)
+            elif self.hand[1][0] >= 10:
+                self.game.calling(self)
+        elif self.hand[0][0] >= 10 and self.hand[1][0] >= 9:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.calling(self)
+            elif self.hand[0][0] >= 11:
+                self.game.calling(self)
+        elif self.hand[0][0] == 11 and self.hand[1][0] == 8:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.calling(self)
+        elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.calling(self)
+        elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.calling(self)
+        elif self.hand[0][0] == 9 and self.hand[1][0] == 8:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.calling(self)
+        else:
+            self.game.folding
+
+    @property
+    def Big_Blind_Call(self):
+        if self.hand[0][0] == self.hand[1][0]:
+            self.game.calling(self)
+        elif self.hand[0][0] == 14:
+            self.game.calling(self)
+        elif self.hand[0][0] >= 11 and self.hand[1][0] >= 7:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.calling(self)
+            elif self.hand[1][0] >= 8:
+                self.game.calling(self)
+        elif self.hand[0][0] == 10 and self.hand[1][0] >= 8:
+            self.game.calling(self)
+        elif self.hand[0][0] == 5 and self.hand[1][0] == 4:
+            self.game.calling(self)
+        elif self.hand[0][0] == 6 and self.hand[1][0] == 5:
+            self.game.calling(self)
+        elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
+            self.game.calling(self)
+        elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
+            self.game.calling(self)
+        elif self.hand[0][0] == 9 and self.hand[1][0] >= 7:
+            self.game.calling(self)
+        else:
+            self.game.folding
 
 
 game1 = Game(100, 10000)
-ai_1 = game1.create_ai('AI01', 0)
-ai_2 = game1.create_ai('AI02', 1)
-ai_3 = game1.create_ai('AI03', 2)
-ai_4 = game1.create_ai('AI04', 3)
-ai_5 = game1.create_ai('AI05', 4)
-ai_6 = game1.create_ai('AI06', 5)
-game1.add_player(ai_1)
-game1.add_player(ai_2)
-game1.add_player(ai_3)
-game1.add_player(ai_4)
-game1.add_player(ai_5)
-game1.add_player(ai_6)
+game1.add_players('ai_1', 'ai_2', 'ai_3', 'ai_4', 'ai_5', 'ai_6')
+game1.create_ais
 board1 = game1.create_board
 for x in range(len(game1.players)):
     game1.players[x].p_hand
 print(f'\nBoard: {board1} \n')
 game1.start_round
-ai_4.preflop(game1)
-ai_5.preflop(game1)
-ai_6.preflop(game1)
-ai_1.preflop(game1)
-ai_2.preflop(game1)
-ai_3.preflop(game1)
+game1.preflop_round
 for x in range(len(game1.players)):
     print(game1.players[x].hand_compare(board1))
 print(f'\n{game1.winner}\n')
