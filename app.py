@@ -587,12 +587,8 @@ game1.add_player(ai_4)
 game1.add_player(ai_5)
 game1.add_player(ai_6)
 board1 = game1.create_board
-ai_1.p_hand
-ai_2.p_hand
-ai_3.p_hand
-ai_4.p_hand
-ai_5.p_hand
-ai_6.p_hand
+for x in range(len(game1.players)):
+    game1.players[x].p_hand
 print(f'\nBoard: {board1} \n')
 game1.start_round
 ai_4.preflop(game1)
@@ -601,17 +597,9 @@ ai_6.preflop(game1)
 ai_1.preflop(game1)
 ai_2.preflop(game1)
 ai_3.preflop(game1)
-print(ai_1.hand_compare(board1))
-print(ai_2.hand_compare(board1))
-print(ai_3.hand_compare(board1))
-print(ai_4.hand_compare(board1))
-print(ai_5.hand_compare(board1))
-print(ai_6.hand_compare(board1))
+for x in range(len(game1.players)):
+    print(game1.players[x].hand_compare(board1))
 print(f'\n{game1.winner}\n')
-ai_1.p_hand
-ai_2.p_hand
-ai_3.p_hand
-ai_4.p_hand
-ai_5.p_hand
-ai_6.p_hand
+for x in range(len(game1.players)):
+    game1.players[x].p_hand
 print('\n', game1.pot)
