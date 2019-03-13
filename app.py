@@ -656,6 +656,81 @@ class AI(Player):
         else:
             self.game.folding
 
+    @property
+    def Three_Bet_Raise(self):
+        if self.hand[0][0] == self.hand[1][0]:
+            if self.hand[0][0] >= 7:
+                self.game.raising(self, 10*self.BB)
+        elif self.hand[0][0] == 14 and self.hand[1][0] >= 11:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.raising(self, 10*self.BB)
+            elif self.hand[1][0] >= 12:
+                self.game.raising(self, 10*self.BB)
+        elif self.hand[0][0] == 13 and self.hand[1][0] >= 12:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.raising(self, 10*self.BB)
+        else:
+            self.game.folding
+
+    @property
+    def Three_Bet_Call(self):
+        if self.hand[0][0] == self.hand[1][0]:
+            if self.hand[0][0] >= 7:
+                self.game.calling(self)
+        elif self.hand[0][0] == 14 and self.hand[1][0] >= 11:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.calling(self)
+            elif self.hand[1][0] >= 12:
+                self.game.calling(self)
+        elif self.hand[0][0] == 13 and self.hand[1][0] >= 12:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.calling(self)
+        else:
+            self.game.folding
+
+    @property
+    def Four_Bet_Raise(self):
+        if self.hand[0][0] == self.hand[1][0]:
+            if self.hand[0][0] >= 11:
+                self.game.raising(self, 25*self.BB)
+        elif self.hand[0][0] == 14 and self.hand[1][0] >= 13:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.raising(self, 25*self.BB)
+        else:
+            self.game.folding
+
+    @property
+    def Four_Bet_Call(self):
+        if self.hand[0][0] == self.hand[1][0]:
+            if self.hand[0][0] >= 10:
+                self.game.calling(self)
+        elif self.hand[0][0] == 14 and self.hand[1][0] >= 12:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.calling(self)
+            elif self.hand[1][0] >= 13:
+                self.game.calling(self)
+        else:
+            self.game.folding
+
+    @property
+    def Five_Bet_Raise(self):
+        if self.hand[0][0] == self.hand[1][0]:
+            if self.hand[0][0] >= 13:
+                self.game.raising(self, 60*self.BB)
+        else:
+            self.game.folding
+
+    @property
+    def Five_Bet_Call(self):
+        if self.hand[0][0] == self.hand[1][0]:
+            if self.hand[0][0] >= 13:
+                self.game.calling(self)
+        elif self.hand[0][0] == 14 and self.hand[1][0] >= 13:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.calling(self)
+        else:
+            self.game.folding
+
 
 game1 = Game(100, 10000)
 game1.add_players('ai_1', 'ai_2', 'ai_3', 'ai_4', 'ai_5', 'ai_6')
