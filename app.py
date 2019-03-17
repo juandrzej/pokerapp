@@ -12,12 +12,12 @@ def create_deck():
 
 
 class Game:
-    def __init__(self, BB, stack):
+    def __init__(self, BB, stack, players):
         self.deck = create_deck()
         self.BB = BB
         self.SB = BB/2
         self.stack = stack
-        self.players = []
+        self.players = players
         self.pot = 0
         self.flop = []
         self.turn = []
@@ -43,30 +43,26 @@ class Game:
         self.board = self.flop
         self.board.extend(self.turn)
         self.board.extend(self.river)
-        return self.board
-
-    def create_player(self, name, position):
-        return Player(self.BB, self.stack, name, self.create_hand, position)
-
-    def add_player(self, who):
-        self.players.append(who)
-
-    def add_players(self, *pls):
-        for x in range(len(pls)):
-            self.add_player(pls[x])
 
     @property
     def create_ais(self):
-        for x in range(len(self.players)):
-            self.players[x] = self.create_ai(f'AI0{x}', x)
+        num = self.players
+        self.players = []
+        for x in range(num):
+            self.players.append(self.create_ai(f'AI0{x}', x))
 
     def create_ai(self, name, position):
-        return AI(self.BB, self.stack, name, self.create_hand, position, self)
+        return AI(self.BB, self.stack, self.players, name, self.create_hand, position, self)
 
     @property
     def print_hands(self):
         for x in range(len(self.players)):
             self.players[x].print_hand
+
+    @property
+    def hand_comparer(self):
+        for x in range(len(self.players)):
+            print(self.players[x].hand_compare(self.board))
 
     @property
     def winner(self):  # Decides who wins
@@ -94,6 +90,7 @@ class Game:
 
     @property
     def start_round(self):
+        self.create_board
         for x in range(len(self.players)):
             self.players[x].action = True
             if self.players[x].position == 1:
@@ -165,33 +162,33 @@ class Game:
     def next_round(self):
         for p in range(len(self.players)):
             if p < len(self.players)-1:
-                self.players[p].position == self.players[p+1].position
+                self.players[p].position = self.players[p+1].position
             else:
                 if self.players[0].position == 0:
-                    self.players[p].position == len(self.players)
+                    self.players[p].position = len(self.players)
                 else:
-                    self.players[p].position == self.players[0].position - 1
-        self.pot == 0
+                    self.players[p].position = self.players[0].position - 1
+        self.pot = 0
         self.deck = create_deck()
+        self.raise_amt = self.BB
         for p in range(len(self.players)):
-            self.players[p].hand == self.create_hand
+            self.players[p].hand = self.create_hand
 
 
 class Player(Game):
-    def __init__(self, BB, stack, name, hand, position, game):
-        super().__init__(BB, stack)
+    def __init__(self, BB, stack, players, name, hand, position, game):
+        super().__init__(BB, stack, players)
         self.name = name
         self.hand = hand
         self.position = position
         self.game = game
         self.action = False
-        self.start_hand = tuple(hand)
-        self.next = None
+        # self.start_hand = tuple(hand)
         self.hand_power = []
 
     @property
     def print_hand(self):  # Player info printer
-        print(f'{self.name}\'s hand: {self.start_hand}, stack: {self.stack}, position: {self.position}.')
+        print(f'{self.name}\'s hand: {self.hand}, stack: {self.stack}, position: {self.position}.')
 
     def hand_compare(self, board):  # Who has what and hand power decider
         self.hand.extend(board)
@@ -374,8 +371,8 @@ class Player(Game):
 
 
 class AI(Player):
-    def __init__(self, BB, stack, name, hand, position, game):
-        super().__init__(BB, stack, name, hand, position, game)
+    def __init__(self, BB, stack, players, name, hand, position, game):
+        super().__init__(BB, stack, players, name, hand, position, game)
 
     @property
     def preflop(self):
@@ -748,16 +745,13 @@ class AI(Player):
             self.game.folding
 
 
-game1 = Game(100, 10000)
-game1.add_players('ai_1', 'ai_2', 'ai_3', 'ai_4', 'ai_5', 'ai_6')
+game1 = Game(100, 10000, 6)
 game1.create_ais
-board1 = game1.create_board
-game1.print_hands
-print(f'\nBoard: {board1} \n')
 game1.start_round
+game1.print_hands
+print(f'\nBoard: {game1.board} \n')
 game1.preflop_round
-for x in range(len(game1.players)):
-    print(game1.players[x].hand_compare(board1))
+game1.hand_comparer
 print(f'\n{game1.winner}\n')
 print(game1.pot)
 game1.next_round
