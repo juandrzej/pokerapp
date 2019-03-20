@@ -126,47 +126,38 @@ class Game:
 
     @property
     def preflop_round(self):
-        print(self.pot)
         active_players = self.players
         active_players = sorted(active_players, key=attrgetter('position'))
         active_players.append(active_players.pop(0))
         active_players.append(active_players.pop(0))
         active_players.append(active_players.pop(0))
+        act_players = []
         for p in range(len(active_players)):
             active_players[p].preflop
-        print(self.pot)
-        act_players = []
-        for p in range(len(active_players)):
+            print(active_players[p].in_pot)
             if active_players[p].action:
                 act_players.append(active_players[p])
+        print(f'First circle: {self.pot}')
+        act_players2 = []
         if len(act_players) > 1:
-            for p in range(len(act_players)):
-                act_players[p].preflop_3bet
-        active_players = act_players
-        print(self.pot)
-        act_players = []
-        for p in range(len(active_players)):
-            if active_players[p].action:
-                act_players.append(active_players[p])
-        if len(act_players) > 1:
-            for p in range(len(act_players)):
-                act_players[p].preflop_4bet
-        active_players = act_players
-        print(self.pot)
-        act_players = []
-        for p in range(len(active_players)):
-            if active_players[p].action:
-                act_players.append(active_players[p])
-        if len(act_players) > 1:
-            for p in range(len(act_players)):
-                act_players[p].preflop_5bet
-        print(self.pot)
+            for a in range(len(act_players)):
+                if act_players[a].in_pot < self.raise_amt:
+                    act_players[a].preflop
+                    if act_players[a].action:
+                        act_players2.append(act_players[a])
+        print(f'Second circle: {self.pot}')
+        if len(act_players2) > 1:
+            for a in range(len(act_players2)):
+                if act_players2[a].in_pot < self.raise_amt:
+                    act_players2[a].preflop
+        print(f'Third circle: {self.pot}')
 
     @property
     def checking(self):
         pass
 
     def calling(self, who):
+        who.in_pot = self.raise_amt
         if who.position == 1:
             self.pot += self.raise_amt-self.SB
             who.stack -= self.raise_amt-self.SB
@@ -178,11 +169,13 @@ class Game:
             who.stack -= self.raise_amt
 
     def re_calling(self, who):
+        who.in_pot = self.raise_amt
         self.pot += self.raise_amt
         who.stack -= self.raise_amt
 
     def raising(self, who, how_much):
         self.raise_amt = how_much
+        who.in_pot = self.raise_amt
         if who.position == 1:
             self.pot += self.raise_amt-self.SB
             who.stack -= self.raise_amt-self.SB
@@ -195,6 +188,7 @@ class Game:
 
     def re_raising(self, who, how_much):
         self.raise_amt = how_much
+        who.in_pot = self.raise_amt
         self.pot += self.raise_amt
         who.stack -= self.raise_amt
 
@@ -209,6 +203,7 @@ class Game:
         self.deck = create_deck()
         self.raise_amt = self.BB
         for p in range(len(self.players)):
+            self.players[p].in_pot = 0
             self.players[p].hand = self.create_hand
 
     def play_game(self, num):
