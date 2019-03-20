@@ -8,9 +8,16 @@ class Scripting_Player(Player):
 
     @property
     def preflop(self):
-        if self.game.raise_amt == self.game.BB*60:
+        if self.game.raise_amt == self.game.BB*100:
+            print(self.name, '6betC')
+            self.Six_Bet_Call
+
+        elif self.game.raise_amt == self.game.BB*50:
             print(self.name, '5betC')
             self.Five_Bet_Call
+            if self.action:
+                print(self.name, '6betR')
+                self.Six_Bet_Raise
 
         elif self.game.raise_amt == self.game.BB*25:
             print(self.name, '4betC')
@@ -476,11 +483,7 @@ class Scripting_Player(Player):
                 self.game.checking
                 print(self.name, 'Check')
         elif self.hand[0][0] == 14 and self.hand[1][0] >= 13:
-            if self.hand[0][1] == self.hand[1][1]:
-                self.game.re_raising(self, 25*self.game.BB)
-            else:
-                self.game.checking
-                print(self.name, 'Check')
+            self.game.re_raising(self, 25*self.game.BB)
         else:
             self.game.checking
             print(self.name, 'Check')
@@ -508,8 +511,14 @@ class Scripting_Player(Player):
     @property
     def Five_Bet_Raise(self):
         if self.hand[0][0] == self.hand[1][0]:
-            if self.hand[0][0] >= 13:
-                self.game.re_raising(self, 60*self.game.BB)
+            if self.hand[0][0] >= 12:
+                self.game.re_raising(self, 50*self.game.BB)
+            else:
+                self.game.checking
+                print(self.name, 'Check')
+        elif self.hand[0][0] == 14 and self.hand[1][0] >= 13:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.re_raising(self, 50*self.game.BB)
             else:
                 self.game.checking
                 print(self.name, 'Check')
@@ -525,8 +534,26 @@ class Scripting_Player(Player):
             else:
                 self.folding
                 print(self.name, 'Fold')
-        elif self.hand[0][0] == 14 and self.hand[1][0] >= 13:
-            if self.hand[0][1] == self.hand[1][1]:
+        else:
+            self.folding
+            print(self.name, 'Fold')
+
+    @property
+    def Six_Bet_Raise(self):
+        if self.hand[0][0] == self.hand[1][0]:
+            if self.hand[0][0] == 14:
+                self.game.re_raising(self, 100*self.game.BB)
+            else:
+                self.game.checking
+                print(self.name, 'Check')
+        else:
+            self.game.checking
+            print(self.name, 'Check')
+
+    @property
+    def Six_Bet_Call(self):
+        if self.hand[0][0] == self.hand[1][0]:
+            if self.hand[0][0] == 14:
                 self.game.re_calling(self)
             else:
                 self.folding

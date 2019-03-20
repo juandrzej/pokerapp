@@ -70,6 +70,46 @@ class Game:
             self.players[x].hand_compare(self.board)
 
     @property
+    def checking(self):
+        pass
+
+    def calling(self, who):
+        who.in_pot = self.raise_amt
+        if who.position == 1:
+            self.pot += self.raise_amt-self.SB
+            who.stack -= self.raise_amt-self.SB
+        elif who.position == 2:
+            self.pot += self.raise_amt-self.BB
+            who.stack -= self.raise_amt-self.BB
+        else:
+            self.pot += self.raise_amt
+            who.stack -= self.raise_amt
+
+    def re_calling(self, who):
+        who.in_pot = self.raise_amt
+        self.pot += self.raise_amt
+        who.stack -= self.raise_amt
+
+    def raising(self, who, how_much):
+        self.raise_amt = how_much
+        who.in_pot = self.raise_amt
+        if who.position == 1:
+            self.pot += self.raise_amt-self.SB
+            who.stack -= self.raise_amt-self.SB
+        elif who.position == 2:
+            self.pot += self.raise_amt-self.BB
+            who.stack -= self.raise_amt-self.BB
+        else:
+            self.pot += self.raise_amt
+            who.stack -= self.raise_amt
+
+    def re_raising(self, who, how_much):
+        self.raise_amt = how_much
+        who.in_pot = self.raise_amt
+        self.pot += self.raise_amt
+        who.stack -= self.raise_amt
+
+    @property
     def winner(self):  # Decides who wins
         active_players = []
         who = None
@@ -151,46 +191,6 @@ class Game:
                 if act_players2[a].in_pot < self.raise_amt:
                     act_players2[a].preflop
         print(f'Third circle: {self.pot}')
-
-    @property
-    def checking(self):
-        pass
-
-    def calling(self, who):
-        who.in_pot = self.raise_amt
-        if who.position == 1:
-            self.pot += self.raise_amt-self.SB
-            who.stack -= self.raise_amt-self.SB
-        elif who.position == 2:
-            self.pot += self.raise_amt-self.BB
-            who.stack -= self.raise_amt-self.BB
-        else:
-            self.pot += self.raise_amt
-            who.stack -= self.raise_amt
-
-    def re_calling(self, who):
-        who.in_pot = self.raise_amt
-        self.pot += self.raise_amt
-        who.stack -= self.raise_amt
-
-    def raising(self, who, how_much):
-        self.raise_amt = how_much
-        who.in_pot = self.raise_amt
-        if who.position == 1:
-            self.pot += self.raise_amt-self.SB
-            who.stack -= self.raise_amt-self.SB
-        elif who.position == 2:
-            self.pot += self.raise_amt-self.BB
-            who.stack -= self.raise_amt-self.BB
-        else:
-            self.pot += self.raise_amt
-            who.stack -= self.raise_amt
-
-    def re_raising(self, who, how_much):
-        self.raise_amt = how_much
-        who.in_pot = self.raise_amt
-        self.pot += self.raise_amt
-        who.stack -= self.raise_amt
 
     @property
     def next_round(self):
