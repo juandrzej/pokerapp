@@ -1,7 +1,7 @@
 import random
 
 
-def create_deck():
+def create_deck():  # H = Hearts, D = Diamonds, C = Clubs, S =Spades
     colors = ('H', 'D', 'C', 'S')
     card_nums = (2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)
     deck = []
@@ -13,12 +13,12 @@ def create_deck():
 
 class Game:
     def __init__(self, BB, stack, players):
-        self.deck = create_deck()
         self.BB = BB
         self.SB = BB/2
         self.stack = stack
         self.players = players
         self.pot = 0
+        self.deck = create_deck()
         self.flop = []
         self.turn = []
         self.river = []
@@ -70,35 +70,35 @@ class Game:
 
     @property
     def winner(self):  # Decides who wins
-        AIs = []
+        active_players = []
         who = None
         for p in range(len(self.players)):
             if self.players[p].action:
-                AIs.append(self.players[p])
-        if len(AIs) == 0:
+                active_players.append(self.players[p])
+        if len(active_players) == 0:
             for p in range(len(self.players)):
                 if self.players[p].position == 2:
                     who = self.players[p]
                     break
             who.stack += self.pot
             return f'The winner is {who.name} without any action.'
-        elif len(AIs) == 1:
-            who = AIs[0]
+        elif len(active_players) == 1:
+            who = active_players[0]
             who.stack += self.pot
             return f'The winner is {who.name} without showdown.'
         else:
-            return self.winner_2(AIs)
+            return self.winner_2(active_players)
 
-    def winner_2(self, AIs):  # Decides who wins
+    def winner_2(self, active_players):  # Decides who wins
         hands = []
-        for x in range(len(AIs)):
-            hands.append(AIs[x].hand_power)
+        for x in range(len(active_players)):
+            hands.append(active_players[x].hand_power)
         winner = hands[0]
-        who = AIs[0]
+        who = active_players[0]
         for x in range(len(hands)):
             if hands[x][0] > winner[0]:
                 winner = hands[x]
-                who = AIs[x]
+                who = active_players[x]
         for x in range(len(hands)):
             if hands[x][0] == winner[0]:
                 for y in range(len(hands[x])-1):
@@ -106,7 +106,7 @@ class Game:
                         break
                     if hands[x][y+1][0] > winner[y+1][0]:
                         winner = hands[x]
-                        who = AIs[x]
+                        who = active_players[x]
                         break
         who.stack += self.pot
         return f'The winner is {who.name} with hand: {winner}'
@@ -125,6 +125,7 @@ class Game:
 
     @property
     def preflop_round(self):
+        active_players = []
         for y in range(len(self.players)):
             if self.players[y].position == 3:
                 self.players[y].preflop
@@ -149,6 +150,11 @@ class Game:
             if self.players[y].position == 2:
                 self.players[y].preflop
                 break
+        for p in range(len(self.players)):
+            if self.players[p].action:
+                active_players.append(self.players[p])
+        if len(active_players) > 1:
+            pass
 
     @property
     def checking(self):
