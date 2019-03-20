@@ -1,4 +1,5 @@
 import random
+from operator import attrgetter
 
 
 def create_deck():  # H = Hearts, D = Diamonds, C = Clubs, S =Spades
@@ -125,36 +126,41 @@ class Game:
 
     @property
     def preflop_round(self):
-        active_players = []
-        for y in range(len(self.players)):
-            if self.players[y].position == 3:
-                self.players[y].preflop
-                break
-        for y in range(len(self.players)):
-            if self.players[y].position == 4:
-                self.players[y].preflop
-                break
-        for y in range(len(self.players)):
-            if self.players[y].position == 5:
-                self.players[y].preflop
-                break
-        for y in range(len(self.players)):
-            if self.players[y].position == 0:
-                self.players[y].preflop
-                break
-        for y in range(len(self.players)):
-            if self.players[y].position == 1:
-                self.players[y].preflop
-                break
-        for y in range(len(self.players)):
-            if self.players[y].position == 2:
-                self.players[y].preflop
-                break
-        for p in range(len(self.players)):
-            if self.players[p].action:
-                active_players.append(self.players[p])
-        if len(active_players) > 1:
-            pass
+        print(self.pot)
+        active_players = self.players
+        active_players = sorted(active_players, key=attrgetter('position'))
+        active_players.append(active_players.pop(0))
+        active_players.append(active_players.pop(0))
+        active_players.append(active_players.pop(0))
+        for p in range(len(active_players)):
+            active_players[p].preflop
+        print(self.pot)
+        act_players = []
+        for p in range(len(active_players)):
+            if active_players[p].action:
+                act_players.append(active_players[p])
+        if len(act_players) > 1:
+            for p in range(len(act_players)):
+                act_players[p].preflop_3bet
+        active_players = act_players
+        print(self.pot)
+        act_players = []
+        for p in range(len(active_players)):
+            if active_players[p].action:
+                act_players.append(active_players[p])
+        if len(act_players) > 1:
+            for p in range(len(act_players)):
+                act_players[p].preflop_4bet
+        active_players = act_players
+        print(self.pot)
+        act_players = []
+        for p in range(len(active_players)):
+            if active_players[p].action:
+                act_players.append(active_players[p])
+        if len(act_players) > 1:
+            for p in range(len(act_players)):
+                act_players[p].preflop_5bet
+        print(self.pot)
 
     @property
     def checking(self):
@@ -171,6 +177,10 @@ class Game:
             self.pot += self.raise_amt
             who.stack -= self.raise_amt
 
+    def re_calling(self, who):
+        self.pot += self.raise_amt
+        who.stack -= self.raise_amt
+
     def raising(self, who, how_much):
         self.raise_amt = how_much
         if who.position == 1:
@@ -182,6 +192,11 @@ class Game:
         else:
             self.pot += self.raise_amt
             who.stack -= self.raise_amt
+
+    def re_raising(self, who, how_much):
+        self.raise_amt = how_much
+        self.pot += self.raise_amt
+        who.stack -= self.raise_amt
 
     @property
     def next_round(self):
@@ -204,6 +219,6 @@ class Game:
             self.hand_comparer
             self.winner
             self.next_round
-            # self.print_hands
-            # print('\n\n')
-        self.print_stacks
+            self.print_hands
+            print('\n\n')
+        # self.print_stacks
