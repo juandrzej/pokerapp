@@ -68,6 +68,9 @@ class Scripting_Player(Player):
                 self.game.raising(self, 3*self.game.BB)
             elif self.hand[1][0] >= 11:
                 self.game.raising(self, 3*self.game.BB)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] == 13 and self.hand[1][0] >= 12:
             self.game.raising(self, 3*self.game.BB)
         else:
@@ -95,17 +98,29 @@ class Scripting_Player(Player):
                 self.game.raising(self, 3*self.game.BB)
             elif self.hand[1][0] >= 9:
                 self.game.raising(self, 3*self.game.BB)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] >= 10 and self.hand[1][0] >= 9:
             self.game.raising(self, 3*self.game.BB)
         elif self.hand[0][0] == 10 and self.hand[1][0] == 8:
             if self.hand[0][1] == self.hand[1][1]:
                 self.game.raising(self, 3*self.game.BB)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] == 6 and self.hand[1][0] == 5:
             if self.hand[0][1] == self.hand[1][1]:
                 self.game.raising(self, 3*self.game.BB)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
             if self.hand[0][1] == self.hand[1][1]:
                 self.game.raising(self, 3*self.game.BB)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
             self.game.raising(self, 3*self.game.BB)
         elif self.hand[0][0] == 9 and self.hand[1][0] == 8:
@@ -125,6 +140,9 @@ class Scripting_Player(Player):
                 self.game.raising(self, 3*self.game.BB)
             elif self.hand[1][0] >= 8:
                 self.game.raising(self, 3*self.game.BB)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] == 10 and self.hand[1][0] >= 8:
             self.game.raising(self, 3*self.game.BB)
         elif self.hand[0][0] == 5 and self.hand[1][0] == 4:
@@ -150,23 +168,41 @@ class Scripting_Player(Player):
                 self.game.raising(self, 3*self.game.BB)
             elif self.hand[1][0] >= 10:
                 self.game.raising(self, 3*self.game.BB)
-            elif self.hand[0][0] >= 10 and self.hand[1][0] >= 9:
-                if self.hand[0][1] == self.hand[1][1]:
-                    self.game.raising(self, 3*self.game.BB)
+            else:
+                self.folding
+                print(self.name, 'Fold')
+        elif self.hand[0][0] >= 10 and self.hand[1][0] >= 9:
+            if self.hand[0][1] == self.hand[1][1]:
+                self.game.raising(self, 3*self.game.BB)
             elif self.hand[0][0] >= 11:
                 self.game.raising(self, 3*self.game.BB)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] == 11 and self.hand[1][0] == 8:
             if self.hand[0][1] == self.hand[1][1]:
                 self.game.raising(self, 3*self.game.BB)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
             if self.hand[0][1] == self.hand[1][1]:
                 self.game.raising(self, 3*self.game.BB)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
             if self.hand[0][1] == self.hand[1][1]:
                 self.game.raising(self, 3*self.game.BB)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] == 9 and self.hand[1][0] == 8:
             if self.hand[0][1] == self.hand[1][1]:
                 self.game.raising(self, 3*self.game.BB)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         else:
             self.folding
             print(self.name, 'Fold')
@@ -182,6 +218,9 @@ class Scripting_Player(Player):
                 self.game.raising(self, 3*self.game.BB)
             elif self.hand[1][0] >= 8:
                 self.game.raising(self, 3*self.game.BB)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] == 10 and self.hand[1][0] >= 8:
             self.game.raising(self, 3*self.game.BB)
         elif self.hand[0][0] == 5 and self.hand[1][0] == 4:
@@ -207,6 +246,9 @@ class Scripting_Player(Player):
                 self.game.calling(self)
             elif self.hand[1][0] >= 11:
                 self.game.calling(self)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] == 13 and self.hand[1][0] >= 12:
             self.game.calling(self)
         else:
@@ -234,17 +276,29 @@ class Scripting_Player(Player):
                 self.game.calling(self)
             elif self.hand[1][0] >= 9:
                 self.game.calling(self)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] >= 10 and self.hand[1][0] >= 9:
             self.game.calling(self)
         elif self.hand[0][0] == 10 and self.hand[1][0] == 8:
             if self.hand[0][1] == self.hand[1][1]:
                 self.game.calling(self)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] == 6 and self.hand[1][0] == 5:
             if self.hand[0][1] == self.hand[1][1]:
                 self.game.calling(self)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
             if self.hand[0][1] == self.hand[1][1]:
                 self.game.calling(self)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
             self.game.calling(self)
         elif self.hand[0][0] == 9 and self.hand[1][0] == 8:
@@ -264,6 +318,9 @@ class Scripting_Player(Player):
                 self.game.calling(self)
             elif self.hand[1][0] >= 8:
                 self.game.calling(self)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] == 10 and self.hand[1][0] >= 8:
             self.game.calling(self)
         elif self.hand[0][0] == 5 and self.hand[1][0] == 4:
@@ -289,23 +346,41 @@ class Scripting_Player(Player):
                 self.game.calling(self)
             elif self.hand[1][0] >= 10:
                 self.game.calling(self)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] >= 10 and self.hand[1][0] >= 9:
             if self.hand[0][1] == self.hand[1][1]:
                 self.game.calling(self)
             elif self.hand[0][0] >= 11:
                 self.game.calling(self)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] == 11 and self.hand[1][0] == 8:
             if self.hand[0][1] == self.hand[1][1]:
                 self.game.calling(self)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
             if self.hand[0][1] == self.hand[1][1]:
                 self.game.calling(self)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
             if self.hand[0][1] == self.hand[1][1]:
                 self.game.calling(self)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] == 9 and self.hand[1][0] == 8:
             if self.hand[0][1] == self.hand[1][1]:
                 self.game.calling(self)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         else:
             self.folding
             print(self.name, 'Fold')
@@ -321,6 +396,9 @@ class Scripting_Player(Player):
                 self.game.calling(self)
             elif self.hand[1][0] >= 8:
                 self.game.calling(self)
+            else:
+                self.folding
+                print(self.name, 'Fold')
         elif self.hand[0][0] == 10 and self.hand[1][0] >= 8:
             self.game.calling(self)
         elif self.hand[0][0] == 5 and self.hand[1][0] == 4:
