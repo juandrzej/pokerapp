@@ -5,6 +5,11 @@ class Scripting_Player(Player):
     def __init__(self, name, hand, position, game, stack):
         super().__init__(name, hand, position, game, stack)
         self.in_pot = 0
+        self.value_OPR = self.game.BB*3
+        self.value_3Bet = self.game.BB*10
+        self.value_4Bet = self.game.BB*25
+        self.value_5Bet = self.game.BB*50
+        self.value_6Bet = self.game.BB*100
 
     @property
     def pocket_pair(self):
@@ -53,15 +58,16 @@ class Scripting_Player(Player):
 
     @property
     def preflop(self):
-        reactions = {self.game.BB*100: self.BB100, self.game.BB*50: self.BB50,
-                     self.game.BB*25: self.BB25, self.game.BB*10: self.BB10,
-                     self.game.BB*3: self.BB3, self.game.BB: self.BB1}
+        reactions = {self.value_6Bet: self.BB100, self.value_5Bet: self.BB50,
+                     self.value_4Bet: self.BB25, self.value_3Bet: self.BB10,
+                     self.value_OPR: self.BB3, self.game.BB: self.BB1}
         return reactions[self.game.raise_amt]
 
     @property
     def BB100(self):
         print(self.name, '6betC')
         self.Six_Bet_Call
+        print(self.name, self.action)
 
     @property
     def BB50(self):
@@ -70,6 +76,7 @@ class Scripting_Player(Player):
         if self.action:
             print(self.name, '6betR')
             self.Six_Bet_Raise
+        print(self.name, self.action)
 
     @property
     def BB25(self):
@@ -78,6 +85,7 @@ class Scripting_Player(Player):
         if self.action:
             print(self.name, '5betR')
             self.Five_Bet_Raise
+        print(self.name, self.action)
 
     @property
     def BB10(self):
@@ -86,6 +94,7 @@ class Scripting_Player(Player):
         if self.action:
             print(self.name, '4betR')
             self.Four_Bet_Raise
+        print(self.name, self.action)
 
     @property
     def BB3(self):
@@ -94,11 +103,13 @@ class Scripting_Player(Player):
         if self.action:
             print(self.name, '3betR')
             self.Three_Bet_Raise
+        print(self.name, self.action)
 
     @property
     def BB1(self):
         print(self.name, 'OPR')
         self.Open_Raise
+        print(self.name, self.action)
 
     @property
     def OPR_Call(self):
@@ -122,13 +133,11 @@ class Scripting_Player(Player):
             elif self.hand[1][0] >= 11:
                 self.game.raising(self, 3*self.game.BB)
             else:
-                self.folding
-                print(self.name, 'Fold')
+                self.fold
         elif self.connectors(12):
             self.game.raising(self, 3*self.game.BB)
         else:
-            self.folding
-            print(self.name, 'Fold')
+            self.fold
 
     @property
     def MP_Raise(self):
@@ -139,8 +148,7 @@ class Scripting_Player(Player):
         elif self.hand[0][0] == 13 and self.hand[1][0] >= 11:
             self.game.raising(self, 3*self.game.BB)
         else:
-            self.folding
-            print(self.name, 'Fold')
+            self.fold
 
     @property
     def Cut_Off_Raise(self):
@@ -152,33 +160,17 @@ class Scripting_Player(Player):
             elif self.hand[1][0] >= 9:
                 self.game.raising(self, 3*self.game.BB)
             else:
-                self.folding
-                print(self.name, 'Fold')
+                self.fold
         elif self.hand[0][0] >= 10 and self.hand[1][0] >= 9:
             self.game.raising(self, 3*self.game.BB)
-        elif self.hand[0][0] == 10 and self.hand[1][0] == 8:
-            if self.suited:
-                self.game.raising(self, 3*self.game.BB)
-            else:
-                self.folding
-                print(self.name, 'Fold')
-        elif self.hand[0][0] == 6 and self.hand[1][0] == 5:
-            if self.suited:
-                self.game.raising(self, 3*self.game.BB)
-            else:
-                self.folding
-                print(self.name, 'Fold')
-        elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
-            if self.suited:
-                self.game.raising(self, 3*self.game.BB)
-            else:
-                self.folding
-                print(self.name, 'Fold')
+        elif self.hand[0][0] == 10 and self.lower(8) and self.suited:
+            self.game.raising(self, 3*self.game.BB)
+        elif self.suited_connectors(5):
+            self.game.raising(self, 3*self.game.BB)
         elif self.connectors(7):
             self.game.raising(self, 3*self.game.BB)
         else:
-            self.folding
-            print(self.name, 'Fold')
+            self.fold
 
     @property
     def Button_Raise(self):
@@ -192,8 +184,7 @@ class Scripting_Player(Player):
             elif self.hand[1][0] >= 8:
                 self.game.raising(self, 3*self.game.BB)
             else:
-                self.folding
-                print(self.name, 'Fold')
+                self.fold
         elif self.hand[0][0] == 10 and self.hand[1][0] >= 8:
             self.game.raising(self, 3*self.game.BB)
         elif self.connectors(4):
@@ -201,8 +192,7 @@ class Scripting_Player(Player):
         elif self.hand[0][0] == 9 and self.hand[1][0] >= 7:
             self.game.raising(self, 3*self.game.BB)
         else:
-            self.folding
-            print(self.name, 'Fold')
+            self.fold
 
     @property
     def SB_Raise(self):
@@ -214,43 +204,20 @@ class Scripting_Player(Player):
             elif self.hand[1][0] >= 10:
                 self.game.raising(self, 3*self.game.BB)
             else:
-                self.folding
-                print(self.name, 'Fold')
+                self.fold
         elif self.hand[0][0] >= 10 and self.hand[1][0] >= 9:
             if self.suited:
                 self.game.raising(self, 3*self.game.BB)
             elif self.hand[0][0] >= 11:
                 self.game.raising(self, 3*self.game.BB)
             else:
-                self.folding
-                print(self.name, 'Fold')
-        elif self.hand[0][0] == 11 and self.hand[1][0] == 8:
-            if self.suited:
-                self.game.raising(self, 3*self.game.BB)
-            else:
-                self.folding
-                print(self.name, 'Fold')
-        elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
-            if self.suited:
-                self.game.raising(self, 3*self.game.BB)
-            else:
-                self.folding
-                print(self.name, 'Fold')
-        elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
-            if self.suited:
-                self.game.raising(self, 3*self.game.BB)
-            else:
-                self.folding
-                print(self.name, 'Fold')
-        elif self.hand[0][0] == 9 and self.hand[1][0] == 8:
-            if self.suited:
-                self.game.raising(self, 3*self.game.BB)
-            else:
-                self.folding
-                print(self.name, 'Fold')
+                self.fold
+        elif self.hand[0][0] == 11 and self.lower(8) and self.suited:
+            self.game.raising(self, 3*self.game.BB)
+        elif self.suited_connectors(6):
+            self.game.raising(self, 3*self.game.BB)
         else:
-            self.folding
-            print(self.name, 'Fold')
+            self.fold
 
     @property
     def BB_Raise(self):
@@ -264,8 +231,7 @@ class Scripting_Player(Player):
             elif self.hand[1][0] >= 8:
                 self.game.raising(self, 3*self.game.BB)
             else:
-                self.folding
-                print(self.name, 'Fold')
+                self.fold
         elif self.hand[0][0] == 10 and self.hand[1][0] >= 8:
             self.game.raising(self, 3*self.game.BB)
         elif self.connectors(4):
@@ -273,8 +239,7 @@ class Scripting_Player(Player):
         elif self.hand[0][0] == 9 and self.hand[1][0] >= 7:
             self.game.raising(self, 3*self.game.BB)
         else:
-            self.folding
-            print(self.name, 'Fold')
+            self.fold
 
     @property
     def UTG_Call(self):
@@ -286,13 +251,11 @@ class Scripting_Player(Player):
             elif self.hand[1][0] >= 11:
                 self.game.calling(self)
             else:
-                self.folding
-                print(self.name, 'Fold')
+                self.fold
         elif self.connectors(12):
             self.game.calling(self)
         else:
-            self.folding
-            print(self.name, 'Fold')
+            self.fold
 
     @property
     def MP_Call(self):
@@ -303,8 +266,7 @@ class Scripting_Player(Player):
         elif self.hand[0][0] == 13 and self.hand[1][0] >= 11:
             self.game.calling(self)
         else:
-            self.folding
-            print(self.name, 'Fold')
+            self.fold
 
     @property
     def Cut_Off_Call(self):
@@ -316,33 +278,20 @@ class Scripting_Player(Player):
             elif self.hand[1][0] >= 9:
                 self.game.calling(self)
             else:
-                self.folding
-                print(self.name, 'Fold')
+                self.fold
         elif self.hand[0][0] >= 10 and self.hand[1][0] >= 9:
             self.game.calling(self)
         elif self.hand[0][0] == 10 and self.hand[1][0] == 8:
             if self.suited:
                 self.game.calling(self)
             else:
-                self.folding
-                print(self.name, 'Fold')
-        elif self.hand[0][0] == 6 and self.hand[1][0] == 5:
-            if self.suited:
-                self.game.calling(self)
-            else:
-                self.folding
-                print(self.name, 'Fold')
-        elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
-            if self.suited:
-                self.game.calling(self)
-            else:
-                self.folding
-                print(self.name, 'Fold')
+                self.fold
+        elif self.suited_connectors(5):
+            self.game.calling(self)
         elif self.connectors(7):
             self.game.calling(self)
         else:
-            self.folding
-            print(self.name, 'Fold')
+            self.fold
 
     @property
     def Button_Call(self):
@@ -356,8 +305,7 @@ class Scripting_Player(Player):
             elif self.hand[1][0] >= 8:
                 self.game.calling(self)
             else:
-                self.folding
-                print(self.name, 'Fold')
+                self.fold
         elif self.hand[0][0] == 10 and self.hand[1][0] >= 8:
             self.game.calling(self)
         elif self.connectors(4):
@@ -365,8 +313,7 @@ class Scripting_Player(Player):
         elif self.hand[0][0] == 9 and self.hand[1][0] >= 7:
             self.game.calling(self)
         else:
-            self.folding
-            print(self.name, 'Fold')
+            self.fold
 
     @property
     def SB_Call(self):
@@ -378,43 +325,23 @@ class Scripting_Player(Player):
             elif self.hand[1][0] >= 10:
                 self.game.calling(self)
             else:
-                self.folding
-                print(self.name, 'Fold')
+                self.fold
         elif self.hand[0][0] >= 10 and self.hand[1][0] >= 9:
             if self.suited:
                 self.game.calling(self)
             elif self.hand[0][0] >= 11:
                 self.game.calling(self)
             else:
-                self.folding
-                print(self.name, 'Fold')
+                self.fold
         elif self.hand[0][0] == 11 and self.hand[1][0] == 8:
             if self.suited:
                 self.game.calling(self)
             else:
-                self.folding
-                print(self.name, 'Fold')
-        elif self.hand[0][0] == 7 and self.hand[1][0] == 6:
-            if self.suited:
-                self.game.calling(self)
-            else:
-                self.folding
-                print(self.name, 'Fold')
-        elif self.hand[0][0] == 8 and self.hand[1][0] == 7:
-            if self.suited:
-                self.game.calling(self)
-            else:
-                self.folding
-                print(self.name, 'Fold')
-        elif self.hand[0][0] == 9 and self.hand[1][0] == 8:
-            if self.suited:
-                self.game.calling(self)
-            else:
-                self.folding
-                print(self.name, 'Fold')
+                self.fold
+        elif self.suited_connectors(6):
+            self.game.calling(self)
         else:
-            self.folding
-            print(self.name, 'Fold')
+            self.fold
 
     @property
     def BB_Call(self):
@@ -428,8 +355,7 @@ class Scripting_Player(Player):
             elif self.hand[1][0] >= 8:
                 self.game.calling(self)
             else:
-                self.folding
-                print(self.name, 'Fold')
+                self.fold
         elif self.hand[0][0] == 10 and self.hand[1][0] >= 8:
             self.game.calling(self)
         elif self.connectors(4):
@@ -437,8 +363,7 @@ class Scripting_Player(Player):
         elif self.hand[0][0] == 9 and self.hand[1][0] >= 7:
             self.game.calling(self)
         else:
-            self.folding
-            print(self.name, 'Fold')
+            self.fold
 
     @property
     def Three_Bet_Raise(self):
@@ -450,17 +375,11 @@ class Scripting_Player(Player):
             elif self.hand[1][0] >= 12:
                 self.game.re_raising(self, 10*self.game.BB)
             else:
-                self.game.checking
-                print(self.name, 'Check')
-        elif self.hand[0][0] == 13 and self.hand[1][0] >= 12:
-            if self.suited:
-                self.game.re_raising(self, 10*self.game.BB)
-            else:
-                self.game.checking
-                print(self.name, 'Check')
+                self.check
+        elif self.suited_connectors(12):
+            self.game.re_raising(self, 10*self.game.BB)
         else:
-            self.game.checking
-            print(self.name, 'Check')
+            self.check
 
     @property
     def Three_Bet_Call(self):
@@ -472,17 +391,11 @@ class Scripting_Player(Player):
             elif self.hand[1][0] >= 12:
                 self.game.re_calling(self)
             else:
-                self.folding
-                print(self.name, 'Fold')
-        elif self.hand[0][0] == 13 and self.hand[1][0] >= 12:
-            if self.suited:
-                self.game.re_calling(self)
-            else:
-                self.folding
-                print(self.name, 'Fold')
+                self.fold
+        elif self.suited_connectors(12):
+            self.game.re_calling(self)
         else:
-            self.folding
-            print(self.name, 'Fold')
+            self.fold
 
     @property
     def Four_Bet_Raise(self):
@@ -491,8 +404,7 @@ class Scripting_Player(Player):
         elif self.connectors(13):
             self.game.re_raising(self, 25*self.game.BB)
         else:
-            self.game.checking
-            print(self.name, 'Check')
+            self.check
 
     @property
     def Four_Bet_Call(self):
@@ -502,11 +414,9 @@ class Scripting_Player(Player):
             if self.suited or self.lower(13):
                 self.game.re_calling(self)
             else:
-                self.folding
-                print(self.name, 'Fold')
+                self.fold
         else:
-            self.folding
-            print(self.name, 'Fold')
+            self.fold
 
     @property
     def Five_Bet_Raise(self):
@@ -515,29 +425,25 @@ class Scripting_Player(Player):
         elif self.suited_connectors(13):
             self.game.re_raising(self, 50*self.game.BB)
         else:
-            self.game.checking
-            print(self.name, 'Check')
+            self.check
 
     @property
     def Five_Bet_Call(self):
         if self.pocket_pair_higher(13):
             self.game.re_calling(self)
         else:
-            self.folding
-            print(self.name, 'Fold')
+            self.fold
 
     @property
     def Six_Bet_Raise(self):
         if self.pocket_pair_higher(14):
             self.game.re_raising(self, 100*self.game.BB)
         else:
-            self.game.checking
-            print(self.name, 'Check')
+            self.check
 
     @property
     def Six_Bet_Call(self):
         if self.pocket_pair_higher(14):
             self.game.re_calling(self)
         else:
-            self.folding
-            print(self.name, 'Fold')
+            self.fold

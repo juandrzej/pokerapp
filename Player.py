@@ -10,8 +10,12 @@ class Player:
         self.hand_power = []
 
     @property
-    def folding(self):
+    def fold(self):
         self.action = False
+
+    @property
+    def check(self):
+        pass
 
     @property
     def print_hand(self):  # Player info printer

@@ -70,8 +70,12 @@ class Game:
             self.players[x].hand_compare(self.board)
 
     @property
-    def checking(self):
+    def check(self, who):
         pass
+
+    @property
+    def fold(self, who):
+        who.action = False
 
     def calling(self, who):
         who.in_pot = self.raise_amt
