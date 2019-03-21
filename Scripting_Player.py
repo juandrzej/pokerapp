@@ -81,26 +81,25 @@ class Scripting_Player(Player):
         return reactions[self.game.raise_amt]()
 
     def BB50(self):
-        self.Five_Bet_Call
+        self.Five_Bet_Call()
         if self.action:
-            self.Six_Bet_Raise
+            self.Six_Bet_Raise()
 
     def BB25(self):
-        self.Four_Bet_Call
+        self.Four_Bet_Call()
         if self.action:
-            self.Five_Bet_Raise
+            self.Five_Bet_Raise()
 
     def BB10(self):
-        self.Three_Bet_Call
+        self.Three_Bet_Call()
         if self.action:
-            self.Four_Bet_Raise
+            self.Four_Bet_Raise()
 
     def BB3(self):
-        self.OPR_Call
+        self.OPR_Call()
         if self.action:
-            self.Three_Bet_Raise
+            self.Three_Bet_Raise()
 
-    @property
     def OPR_Call(self):
         OPRsCall = [self.Button_Call, self.SB_Call, self.BB_Call,
                     self.UTG_Call, self.MP_Call, self.Cut_Off_Call]

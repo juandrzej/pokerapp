@@ -70,11 +70,9 @@ class Game:
         for x in range(len(self.players)):
             self.players[x].hand_compare(self.board)
 
-    @property
     def check(self, who):
         pass
 
-    @property
     def fold(self, who):
         who.action = False
 
@@ -183,7 +181,7 @@ class Game:
         act_players = []
         for p in range(len(active_players)):
             active_players[p].preflop
-            print(active_players[p].in_pot)
+            # print(active_players[p].in_pot)
             if active_players[p].action:
                 act_players.append(active_players[p])
         print(f'First circle: {self.pot}')

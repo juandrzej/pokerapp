@@ -11,11 +11,12 @@ class Player:
 
     @property
     def fold(self):
-        self.action = False
+        self.game.fold(self)
         print(self.name, 'Fold')
 
     @property
     def check(self):
+        self.game.check(self)
         print(self.name, 'Check')
 
     @property
