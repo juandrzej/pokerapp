@@ -1,4 +1,4 @@
-from playerclass import Player
+from Player import Player
 
 
 class Scripting_Player(Player):
@@ -8,63 +8,64 @@ class Scripting_Player(Player):
 
     @property
     def preflop(self):
-        if self.game.raise_amt == self.game.BB*100:
-            print(self.name, '6betC')
-            self.Six_Bet_Call
+        reactions = {self.game.BB*100: self.BB100, self.game.BB*50: self.BB50,
+                     self.game.BB*25: self.BB25, self.game.BB*10: self.BB10,
+                     self.game.BB*3: self.BB3, self.game.BB: self.BB1}
+        return reactions[self.game.raise_amt]
 
-        elif self.game.raise_amt == self.game.BB*50:
-            print(self.name, '5betC')
-            self.Five_Bet_Call
-            if self.action:
-                print(self.name, '6betR')
-                self.Six_Bet_Raise
+    @property
+    def BB100(self):
+        print(self.name, '6betC')
+        self.Six_Bet_Call
 
-        elif self.game.raise_amt == self.game.BB*25:
-            print(self.name, '4betC')
-            self.Four_Bet_Call
-            if self.action:
-                print(self.name, '5betR')
-                self.Five_Bet_Raise
+    @property
+    def BB50(self):
+        print(self.name, '5betC')
+        self.Five_Bet_Call
+        if self.action:
+            print(self.name, '6betR')
+            self.Six_Bet_Raise
 
-        elif self.game.raise_amt == self.game.BB*10:
-            print(self.name, '3betC')
-            self.Three_Bet_Call
-            if self.action:
-                print(self.name, '4betR')
-                self.Four_Bet_Raise
+    @property
+    def BB25(self):
+        print(self.name, '4betC')
+        self.Four_Bet_Call
+        if self.action:
+            print(self.name, '5betR')
+            self.Five_Bet_Raise
 
-        elif self.game.raise_amt == self.game.BB*3:
-            print(self.name, 'Call')
-            if self.position == 3:
-                self.UTG_Call
-            elif self.position == 4:
-                self.MP_Call
-            elif self.position == 5:
-                self.Cut_Off_Call
-            elif self.position == 0:
-                self.Button_Call
-            elif self.position == 1:
-                self.Small_Blind_Call
-            elif self.position == 2:
-                self.Big_Blind_Call
-            if self.action:
-                print(self.name, '3betR')
-                self.Three_Bet_Raise
+    @property
+    def BB10(self):
+        print(self.name, '3betC')
+        self.Three_Bet_Call
+        if self.action:
+            print(self.name, '4betR')
+            self.Four_Bet_Raise
 
-        elif self.game.raise_amt == self.game.BB:
-            print(self.name, 'OPR')
-            if self.position == 3:
-                self.UTG_Raise
-            elif self.position == 4:
-                self.MP_Raise
-            elif self.position == 5:
-                self.Cut_Off_Raise
-            elif self.position == 0:
-                self.Button_Raise
-            elif self.position == 1:
-                self.Small_Blind_Raise
-            elif self.position == 2:
-                self.Big_Blind_Raise
+    @property
+    def BB3(self):
+        print(self.name, 'Call')
+        self.OPR_Call
+        if self.action:
+            print(self.name, '3betR')
+            self.Three_Bet_Raise
+
+    @property
+    def BB1(self):
+        print(self.name, 'OPR')
+        self.Open_Raise
+
+    @property
+    def OPR_Call(self):
+        OPRs = [self.Button_Call, self.SB_Call, self.BB_Call,
+                self.UTG_Call, self.MP_Call, self.Cut_Off_Call]
+        return OPRs[self.position]
+
+    @property
+    def Open_Raise(self):
+        OPRs = [self.Button_Raise, self.SB_Raise, self.BB_Raise,
+                self.UTG_Raise, self.MP_Raise, self.Cut_Off_Raise]
+        return OPRs[self.position]
 
     @property
     def UTG_Raise(self):
@@ -167,7 +168,7 @@ class Scripting_Player(Player):
             print(self.name, 'Fold')
 
     @property
-    def Small_Blind_Raise(self):
+    def SB_Raise(self):
         if self.hand[0][0] == self.hand[1][0]:
             self.game.raising(self, 3*self.game.BB)
         elif self.hand[0][0] == 14 and self.hand[1][0] >= 6:
@@ -215,7 +216,7 @@ class Scripting_Player(Player):
             print(self.name, 'Fold')
 
     @property
-    def Big_Blind_Raise(self):
+    def BB_Raise(self):
         if self.hand[0][0] == self.hand[1][0]:
             self.game.raising(self, 3*self.game.BB)
         elif self.hand[0][0] == 14:
@@ -345,7 +346,7 @@ class Scripting_Player(Player):
             print(self.name, 'Fold')
 
     @property
-    def Small_Blind_Call(self):
+    def SB_Call(self):
         if self.hand[0][0] == self.hand[1][0]:
             self.game.calling(self)
         elif self.hand[0][0] == 14 and self.hand[1][0] >= 6:
@@ -393,7 +394,7 @@ class Scripting_Player(Player):
             print(self.name, 'Fold')
 
     @property
-    def Big_Blind_Call(self):
+    def BB_Call(self):
         if self.hand[0][0] == self.hand[1][0]:
             self.game.calling(self)
         elif self.hand[0][0] == 14:

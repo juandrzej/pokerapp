@@ -1,6 +1,6 @@
 import random
-from gameclass import Game
-from scriptingplayerclass import Scripting_Player
+from Game import Game
+from Scripting_Player import Scripting_Player
 
 
 def create_players(game):
