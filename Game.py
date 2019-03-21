@@ -79,6 +79,7 @@ class Game:
         who.action = False
 
     def calling(self, who):
+        print(who.name, 'Call')
         who.in_pot = self.raise_amt
         if who.position == 1:
             self.pot += self.raise_amt-self.SB
@@ -91,11 +92,13 @@ class Game:
             who.stack -= self.raise_amt
 
     def re_calling(self, who):
+        print(who.name, 'Re-call')
         who.in_pot = self.raise_amt
         self.pot += self.raise_amt
         who.stack -= self.raise_amt
 
     def raising(self, who, how_much):
+        print(who.name, 'Raise')
         self.raise_amt = how_much
         who.in_pot = self.raise_amt
         if who.position == 1:
@@ -109,6 +112,7 @@ class Game:
             who.stack -= self.raise_amt
 
     def re_raising(self, who, how_much):
+        print(who.name, 'Re-raise')
         self.raise_amt = how_much
         who.in_pot = self.raise_amt
         self.pot += self.raise_amt
