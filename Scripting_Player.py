@@ -10,6 +10,10 @@ class Scripting_Player(Player):
         self.value_4Bet = self.game.BB*25
         self.value_5Bet = self.game.BB*50
         self.value_6Bet = self.game.BB*100
+        self.OPRs = [self.Button_Raise, self.SB_Raise, self.BB_Raise,
+                     self.UTG_Raise, self.MP_Raise, self.Cut_Off_Raise]
+        self.OPRsCall = [self.Button_Call, self.SB_Call, self.BB_Call,
+                         self.UTG_Call, self.MP_Call, self.Cut_Off_Call]
 
     @property
     def pocket_pair(self):
@@ -113,15 +117,11 @@ class Scripting_Player(Player):
 
     @property
     def OPR_Call(self):
-        OPRs = [self.Button_Call, self.SB_Call, self.BB_Call,
-                self.UTG_Call, self.MP_Call, self.Cut_Off_Call]
-        return OPRs[self.position]
+        return self.OPRsCall[self.position]
 
     @property
     def Open_Raise(self):
-        OPRs = [self.Button_Raise, self.SB_Raise, self.BB_Raise,
-                self.UTG_Raise, self.MP_Raise, self.Cut_Off_Raise]
-        return OPRs[self.position]
+        return self.OPRs[self.position]
 
     @property
     def UTG_Raise(self):

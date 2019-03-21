@@ -9,6 +9,7 @@ def create_deck():  # H = Hearts, D = Diamonds, C = Clubs, S =Spades
     for x in colors:
         for y in card_nums:
             deck.append((y, x))
+    random.shuffle(deck)
     return deck
 
 
@@ -29,8 +30,8 @@ class Game:
     @property
     def create_hand(self):
         hand = []
-        hand.append(self.deck.pop(self.deck.index(random.choice(self.deck))))
-        hand.append(self.deck.pop(self.deck.index(random.choice(self.deck))))
+        hand.append(self.deck.pop())
+        hand.append(self.deck.pop())
         hand.sort(reverse=True)
         return hand
 
@@ -40,11 +41,11 @@ class Game:
         self.turn = []
         self.river = []
         self.board = []
-        self.flop.append(self.deck.pop(self.deck.index(random.choice(self.deck))))
-        self.flop.append(self.deck.pop(self.deck.index(random.choice(self.deck))))
-        self.flop.append(self.deck.pop(self.deck.index(random.choice(self.deck))))
-        self.turn.append(self.deck.pop(self.deck.index(random.choice(self.deck))))
-        self.river.append(self.deck.pop(self.deck.index(random.choice(self.deck))))
+        self.flop.append(self.deck.pop())
+        self.flop.append(self.deck.pop())
+        self.flop.append(self.deck.pop())
+        self.turn.append(self.deck.pop())
+        self.river.append(self.deck.pop())
         self.board = self.flop
         self.board.extend(self.turn)
         self.board.extend(self.river)
@@ -220,4 +221,3 @@ class Game:
             self.next_round
             self.print_hands
             print('\n\n')
-        # self.print_stacks

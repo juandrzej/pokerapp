@@ -8,10 +8,11 @@ def create_players(game):
     pos = list(x for x in range(num))
     game.players = []
     for x in range(num):
-        game.players.append(create_p(game, f'Player 0{x}', pos.pop(pos.index(random.choice(pos)))))
+        p = pos.pop(pos.index(random.choice(pos)))
+        game.players.append(create_p(f'Player 0{x}', p, game))
 
 
-def create_p(game, name, position):
+def create_p(name, position, game):
     return Scripting_Player(name, game.create_hand, position, game, game.stack)
 
 

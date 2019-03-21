@@ -12,14 +12,16 @@ class Player:
     @property
     def fold(self):
         self.action = False
+        print(self.name, 'Fold')
 
     @property
     def check(self):
-        pass
+        print(self.name, 'Check')
 
     @property
     def print_hand(self):  # Player info printer
-        print(f'{self.name}\'s hand: {self.hand}, stack: {self.stack}, position: {self.position}.')
+        p = self.position
+        print(f'{self.name}:{self.hand}, stack:{self.stack}, position:{p}.')
 
     def hand_compare(self, board):  # Who has what and hand power decider
         self.hand_power = []
