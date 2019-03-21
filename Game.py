@@ -217,6 +217,7 @@ class Game:
         self.print_hands
         for i in range(num):
             self.start_round
+            print(self.board)
             self.preflop_round
             self.hand_comparer
             self.winner
