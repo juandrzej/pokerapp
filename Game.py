@@ -117,7 +117,6 @@ class Game:
         self.pot += self.current_raise
         who.stack -= self.current_raise
 
-    @property
     def winner(self):  # Decides who wins
         active_players = []
         who = None
@@ -160,7 +159,6 @@ class Game:
         who.stack += self.pot
         return f'The winner is {who.name} with hand: {winner}'
 
-    @property
     def start_round(self):
         self.create_board
         for x in range(len(self.players)):
@@ -172,7 +170,6 @@ class Game:
                 self.players[x].stack -= self.BB
                 self.pot += self.BB
 
-    @property
     def preflop_round(self):
         active_players = self.players
         active_players = sorted(active_players, key=attrgetter('position'))
@@ -181,7 +178,7 @@ class Game:
         active_players.append(active_players.pop(0))
         act_players = []
         for p in range(len(active_players)):
-            active_players[p].preflop
+            active_players[p].preflop()
             # print(active_players[p].in_pot)
             if active_players[p].action:
                 act_players.append(active_players[p])
@@ -190,17 +187,16 @@ class Game:
         if len(act_players) > 1:
             for a in range(len(act_players)):
                 if act_players[a].in_pot < self.current_raise:
-                    act_players[a].preflop
+                    act_players[a].preflop()
                     if act_players[a].action:
                         act_players2.append(act_players[a])
         print(f'Second circle: {self.pot}')
         if len(act_players2) > 1:
             for a in range(len(act_players2)):
                 if act_players2[a].in_pot < self.current_raise:
-                    act_players2[a].preflop
+                    act_players2[a].preflop()
         print(f'Third circle: {self.pot}')
 
-    @property
     def next_round(self):
         for p in range(len(self.players)):
             if self.players[p].position == (len(self.players)-1):
@@ -217,11 +213,11 @@ class Game:
     def play_game(self, num):
         self.print_hands
         for i in range(num):
-            self.start_round
+            self.start_round()
             print(self.board)
-            self.preflop_round
+            self.preflop_round()
             self.hand_comparer
-            self.winner
-            self.next_round
+            self.winner()
+            self.next_round()
             self.print_hands
             print('\n\n')

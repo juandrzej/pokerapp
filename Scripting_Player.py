@@ -70,11 +70,10 @@ class Scripting_Player(Player):
             return True
         return False
 
-    @property
     def preflop(self):
         reactions = {self.value_6Bet: self.Six_Bet_Call,
                      self.value_5Bet: self.Six_Bet_Raise,
-                     self.value_4Bet: self.self.Five_Bet_Raise,
+                     self.value_4Bet: self.Five_Bet_Raise,
                      self.value_3Bet: self.Four_Bet_Raise,
                      self.value_OPR: self.Three_Bet_Raise,
                      self.game.BB: self.OP_Raise}
@@ -92,8 +91,8 @@ class Scripting_Player(Player):
 
     def UTG_Raise(self):
         range = [self.pocket_pair, self.connectors(12),
-                 all[self.higher(14), self.lower(10), self.suited],
-                 all[self.higher(14), self.lower(11)]]
+                 all([self.higher(14), self.lower(10), self.suited]),
+                 all([self.higher(14), self.lower(11)])]
         if any(range):
             self.open_raise(self.value_OPR)
         else:
@@ -101,8 +100,8 @@ class Scripting_Player(Player):
 
     def MP_Raise(self):
         range = [self.pocket_pair,
-                 all[self.higher(14), self.lower(10)],
-                 all[self.higher(13), self.lower(11)]]
+                 all([self.higher(14), self.lower(10)]),
+                 all([self.higher(13), self.lower(11)])]
         if any(range):
             self.open_raise(self.value_OPR)
         else:
@@ -111,9 +110,9 @@ class Scripting_Player(Player):
     def Cut_Off_Raise(self):
         range = [self.pocket_pair, self.suited_connectors(5),
                  self.suited_one_gappers(8), self.connectors(7),
-                 all[self.higher(14), self.lower(6), self.suited],
-                 all[self.higher(14), self.lower(9)],
-                 all[self.higher(10), self.lower(9)]]
+                 all([self.higher(14), self.lower(6), self.suited]),
+                 all([self.higher(14), self.lower(9)]),
+                 all([self.higher(10), self.lower(9)])]
         if any(range):
             self.open_raise(self.value_OPR)
         else:
@@ -121,8 +120,8 @@ class Scripting_Player(Player):
 
     def Button_Raise(self):
         range = [self.pocket_pair, self.higher(14),
-                 all[self.higher(11), self.lower(7), self.suited],
-                 all[self.higher(11), self.lower(8)],
+                 all([self.higher(11), self.lower(7), self.suited]),
+                 all([self.higher(11), self.lower(8)]),
                  self.connectors(4), self.one_gappers(7)]
         if any(range):
             self.open_raise(self.value_OPR)
@@ -131,10 +130,10 @@ class Scripting_Player(Player):
 
     def SB_Raise(self):
         range = [self.pocket_pair, self.suited_connectors(6),
-                 all[self.higher(14), self.lower(6), self.suited],
-                 all[self.higher(14), self.lower(10)],
-                 all[self.higher(11), self.lower(8), self.suited],
-                 all[self.higher(11), self.lower(9)]]
+                 all([self.higher(14), self.lower(6), self.suited]),
+                 all([self.higher(14), self.lower(10)]),
+                 all([self.higher(11), self.lower(8), self.suited]),
+                 all([self.higher(11), self.lower(9)])]
         if any(range):
             self.open_raise(self.value_OPR)
         else:
@@ -142,8 +141,8 @@ class Scripting_Player(Player):
 
     def BB_Raise(self):
         range = [self.pocket_pair, self.higher(14),
-                 all[self.higher(11), self.lower(7), self.suited],
-                 all[self.higher(11), self.lower(8)],
+                 all([self.higher(11), self.lower(7), self.suited]),
+                 all([self.higher(11), self.lower(8)]),
                  self.connectors(4), self.one_gappers(7)]
         if any(range):
             self.open_raise(self.value_OPR)
@@ -152,8 +151,8 @@ class Scripting_Player(Player):
 
     def UTG_Call(self):
         range = [self.pocket_pair, self.connectors(12),
-                 all[self.higher(14), self.lower(10), self.suited],
-                 all[self.higher(14), self.lower(11)]]
+                 all([self.higher(14), self.lower(10), self.suited]),
+                 all([self.higher(14), self.lower(11)])]
         if any(range):
             self.call
         else:
@@ -161,8 +160,8 @@ class Scripting_Player(Player):
 
     def MP_Call(self):
         range = [self.pocket_pair,
-                 all[self.higher(14), self.lower(10)],
-                 all[self.higher(13), self.lower(11)]]
+                 all([self.higher(14), self.lower(10)]),
+                 all([self.higher(13), self.lower(11)])]
         if any(range):
             self.call
         else:
@@ -171,9 +170,9 @@ class Scripting_Player(Player):
     def Cut_Off_Call(self):
         range = [self.pocket_pair, self.suited_connectors(5),
                  self.suited_one_gappers(8), self.connectors(7),
-                 all[self.higher(14), self.lower(6), self.suited],
-                 all[self.higher(14), self.lower(9)],
-                 all[self.higher(10), self.lower(9)]]
+                 all([self.higher(14), self.lower(6), self.suited]),
+                 all([self.higher(14), self.lower(9)]),
+                 all([self.higher(10), self.lower(9)])]
         if any(range):
             self.call
         else:
@@ -181,8 +180,8 @@ class Scripting_Player(Player):
 
     def Button_Call(self):
         range = [self.pocket_pair, self.higher(14),
-                 all[self.higher(11), self.lower(7), self.suited],
-                 all[self.higher(11), self.lower(8)],
+                 all([self.higher(11), self.lower(7), self.suited]),
+                 all([self.higher(11), self.lower(8)]),
                  self.connectors(4), self.one_gappers(7)]
         if any(range):
             self.call
@@ -191,10 +190,10 @@ class Scripting_Player(Player):
 
     def SB_Call(self):
         range = [self.pocket_pair, self.suited_connectors(6),
-                 all[self.higher(14), self.lower(6), self.suited],
-                 all[self.higher(14), self.lower(10)],
-                 all[self.higher(11), self.lower(8), self.suited],
-                 all[self.higher(11), self.lower(9)]]
+                 all([self.higher(14), self.lower(6), self.suited]),
+                 all([self.higher(14), self.lower(10)]),
+                 all([self.higher(11), self.lower(8), self.suited]),
+                 all([self.higher(11), self.lower(9)])]
         if any(range):
             self.call
         else:
@@ -202,8 +201,8 @@ class Scripting_Player(Player):
 
     def BB_Call(self):
         range = [self.pocket_pair, self.higher(14),
-                 all[self.higher(11), self.lower(7), self.suited],
-                 all[self.higher(11), self.lower(8)],
+                 all([self.higher(11), self.lower(7), self.suited]),
+                 all([self.higher(11), self.lower(8)]),
                  self.connectors(4), self.one_gappers(7)]
         if any(range):
             self.call
@@ -214,8 +213,8 @@ class Scripting_Player(Player):
         self.OPR_Call()
         if self.action:
             range = [self.pocket_pair_higher(7),
-                     all[self.higher(14), self.lower(11), self.suited],
-                     all[self.higher(14), self.lower(12)],
+                     all([self.higher(14), self.lower(11), self.suited]),
+                     all([self.higher(14), self.lower(12)]),
                      self.suited_connectors(12)]
             if any(range):
                 self.re_raise(self.value_3Bet)
@@ -224,8 +223,8 @@ class Scripting_Player(Player):
 
     def Three_Bet_Call(self):
         range = [self.pocket_pair_higher(7),
-                 all[self.higher(14), self.lower(11), self.suited],
-                 all[self.higher(14), self.lower(12)],
+                 all([self.higher(14), self.lower(11), self.suited]),
+                 all([self.higher(14), self.lower(12)]),
                  self.suited_connectors(12)]
         if any(range):
             self.re_call
@@ -243,8 +242,8 @@ class Scripting_Player(Player):
 
     def Four_Bet_Call(self):
         range = [self.pocket_pair_higher(10),
-                 all[self.higher(14), self.lower(12), self.suited],
-                 all[self.higher(14), self.lower(13)]]
+                 all([self.higher(14), self.lower(12), self.suited]),
+                 all([self.higher(14), self.lower(13)])]
         if any(range):
             self.re_call
         else:
