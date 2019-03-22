@@ -25,7 +25,7 @@ class Game:
         self.turn = []
         self.river = []
         self.board = []
-        self.raise_amt = self.BB
+        self.current_raise = self.BB
 
     @property
     def create_hand(self):
@@ -71,50 +71,51 @@ class Game:
             self.players[x].hand_compare(self.board)
 
     def check(self, who):
-        pass
+        print(who.name, 'Check')
 
     def fold(self, who):
+        print(who.name, 'Fold')
         who.action = False
 
-    def calling(self, who):
+    def call(self, who):
         print(who.name, 'Call')
-        who.in_pot = self.raise_amt
+        who.in_pot = self.current_raise
         if who.position == 1:
-            self.pot += self.raise_amt-self.SB
-            who.stack -= self.raise_amt-self.SB
+            self.pot += self.current_raise-self.SB
+            who.stack -= self.current_raise-self.SB
         elif who.position == 2:
-            self.pot += self.raise_amt-self.BB
-            who.stack -= self.raise_amt-self.BB
+            self.pot += self.current_raise-self.BB
+            who.stack -= self.current_raise-self.BB
         else:
-            self.pot += self.raise_amt
-            who.stack -= self.raise_amt
+            self.pot += self.current_raise
+            who.stack -= self.current_raise
 
-    def re_calling(self, who):
+    def re_call(self, who):
         print(who.name, 'Re-call')
-        who.in_pot = self.raise_amt
-        self.pot += self.raise_amt
-        who.stack -= self.raise_amt
+        who.in_pot = self.current_raise
+        self.pot += self.current_raise
+        who.stack -= self.current_raise
 
-    def raising(self, who, how_much):
+    def open_raise(self, who, how_much):
         print(who.name, 'Raise')
-        self.raise_amt = how_much
-        who.in_pot = self.raise_amt
+        self.current_raise = how_much
+        who.in_pot = self.current_raise
         if who.position == 1:
-            self.pot += self.raise_amt-self.SB
-            who.stack -= self.raise_amt-self.SB
+            self.pot += self.current_raise-self.SB
+            who.stack -= self.current_raise-self.SB
         elif who.position == 2:
-            self.pot += self.raise_amt-self.BB
-            who.stack -= self.raise_amt-self.BB
+            self.pot += self.current_raise-self.BB
+            who.stack -= self.current_raise-self.BB
         else:
-            self.pot += self.raise_amt
-            who.stack -= self.raise_amt
+            self.pot += self.current_raise
+            who.stack -= self.current_raise
 
-    def re_raising(self, who, how_much):
+    def re_raise(self, who, how_much):
         print(who.name, 'Re-raise')
-        self.raise_amt = how_much
-        who.in_pot = self.raise_amt
-        self.pot += self.raise_amt
-        who.stack -= self.raise_amt
+        self.current_raise = how_much
+        who.in_pot = self.current_raise
+        self.pot += self.current_raise
+        who.stack -= self.current_raise
 
     @property
     def winner(self):  # Decides who wins
@@ -188,14 +189,14 @@ class Game:
         act_players2 = []
         if len(act_players) > 1:
             for a in range(len(act_players)):
-                if act_players[a].in_pot < self.raise_amt:
+                if act_players[a].in_pot < self.current_raise:
                     act_players[a].preflop
                     if act_players[a].action:
                         act_players2.append(act_players[a])
         print(f'Second circle: {self.pot}')
         if len(act_players2) > 1:
             for a in range(len(act_players2)):
-                if act_players2[a].in_pot < self.raise_amt:
+                if act_players2[a].in_pot < self.current_raise:
                     act_players2[a].preflop
         print(f'Third circle: {self.pot}')
 
@@ -208,7 +209,7 @@ class Game:
                 self.players[p].position += 1
         self.pot = 0
         self.deck = create_deck()
-        self.raise_amt = self.BB
+        self.current_raise = self.BB
         for p in range(len(self.players)):
             self.players[p].in_pot = 0
             self.players[p].hand = self.create_hand
