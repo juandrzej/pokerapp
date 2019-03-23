@@ -183,7 +183,7 @@ class Player:
                         if hand[x+1][0] - hand[x][0] == 1:
                             straight = [hand[x], hand[x+1], hand[x+2],
                                         hand[x+3], hand[x+4]]
-                            if straight in self.is_straightflush(straight):
+                            if self.is_straightflush(straight):
                                 straight_flush = straight
         return straight, straight_flush
 
