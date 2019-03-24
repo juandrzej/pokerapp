@@ -1,6 +1,6 @@
 import random
 from Game import Game
-from Scripting_Player import Scripting_Player
+from NPC import Non_Player_Character
 
 
 def create_players(game):
@@ -13,7 +13,8 @@ def create_players(game):
 
 
 def create_p(name, position, game):
-    return Scripting_Player(name, game.create_hand, position, game, game.stack)
+    return Non_Player_Character(name, game.create_hand,
+                                position, game, game.stack)
 
 
 game1 = Game(100, 10000, 6)

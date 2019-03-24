@@ -1,7 +1,7 @@
 from Player import Player
 
 
-class Scripting_Player(Player):
+class Non_Player_Character(Player):
     def __init__(self, name, hand, position, game, stack):
         super().__init__(name, hand, position, game, stack)
         self.in_pot = 0
