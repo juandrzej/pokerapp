@@ -40,12 +40,12 @@ class Player:
         self.hand_power = []
         self.hand.extend(board)
         self.hand.sort()
-        flush = self.is_flush
-        pair = self.is_pair_triple_quad[0]
-        triple = self.is_pair_triple_quad[1]
-        quad = self.is_pair_triple_quad[2]
-        straight = self.is_straight_straightflush[0]
-        straight_flush = self.is_straight_straightflush[1]
+        flush = self.is_flush(self.hand)
+        pair = self.is_pair_triple_quad(self.hand)[0]
+        triple = self.is_pair_triple_quad(self.hand)[1]
+        quad = self.is_pair_triple_quad(self.hand)[2]
+        straight = self.is_straight_straightflush(self.hand)[0]
+        straight_flush = self.is_straight_straightflush(self.hand)[1]
         if straight_flush:
             self.hand_power.append(8)
             self.hand_power.append(straight_flush[-1])
@@ -120,80 +120,8 @@ class Player:
             self.hand_power.extend(self.hand)
             return f'Kicker: {self.hand}'
 
-    @property
-    def is_flush(self):
-        hearts = []
-        diamonds = []
-        clubs = []
-        spades = []
-        for x in range(len(self.hand)):
-            if self.hand[x][1] == 'H':
-                hearts.append(self.hand[x])
-            if self.hand[x][1] == 'D':
-                diamonds.append(self.hand[x])
-            if self.hand[x][1] == 'C':
-                clubs.append(self.hand[x])
-            if self.hand[x][1] == 'S':
-                spades.append(self.hand[x])
-        if len(hearts) >= 5:
-            return hearts
-        if len(diamonds) >= 5:
-            return diamonds
-        if len(clubs) >= 5:
-            return clubs
-        if len(spades) >= 5:
-            return spades
-        else:
-            return []
-
-    @property
-    def is_pair_triple_quad(self):
-        hand = self.hand
-        pair = []
-        triple = []
-        quad = []
-        for x in range(len(hand)-1):
-            if hand[x][0] == hand[x+1][0]:
-                if x < (len(hand)-2) and hand[x][0] == hand[x+2][0]:
-                    if x < (len(hand)-3) and hand[x][0] == hand[x+3][0]:
-                        quad.extend((hand[x], hand[x+1], hand[x+2], hand[x+3]))
-                        break
-                    triple.extend((hand[x], hand[x+1], hand[x+2]))
-                if hand[x] in triple:
-                    continue
-                pair.extend((hand[x], hand[x+1]))
-        if len(pair) > 4:
-            pair.pop(0)
-            pair.pop(0)
-        if len(triple) > 3:
-            triple.pop(0)
-            triple.pop(0)
-            triple.pop(0)
-        return pair, triple, quad
-
-    @property
-    def is_straight_straightflush(self):
-        hand = self.hand
-        straight = []
-        straight_flush = []
-        for x in range(3):
-            if hand[x+4][0] - hand[x+3][0] == 1:
-                if hand[x+3][0] - hand[x+2][0] == 1:
-                    if hand[x+2][0] - hand[x+1][0] == 1:
-                        if hand[x+1][0] - hand[x][0] == 1:
-                            straight = [hand[x], hand[x+1], hand[x+2],
-                                        hand[x+3], hand[x+4]]
-                            if self.is_straightflush(straight):
-                                straight_flush = straight
-        return straight, straight_flush
-
-    @staticmethod
-    def is_straightflush(straight):
-        hand = straight
-        hearts = []
-        diamonds = []
-        clubs = []
-        spades = []
+    def is_flush(self, hand):
+        hearts, diamonds, clubs, spades = [], [], [], []
         for x in range(len(hand)):
             if hand[x][1] == 'H':
                 hearts.append(hand[x])
@@ -213,3 +141,37 @@ class Player:
             return spades
         else:
             return []
+
+    def is_pair_triple_quad(self, hand):
+        pair, triple, quad = [], [], []
+        for x in range(len(hand)-1):
+            if hand[x][0] == hand[x+1][0]:
+                if x < (len(hand)-2) and hand[x][0] == hand[x+2][0]:
+                    if x < (len(hand)-3) and hand[x][0] == hand[x+3][0]:
+                        quad.extend((hand[x], hand[x+1], hand[x+2], hand[x+3]))
+                        break
+                    triple.extend((hand[x], hand[x+1], hand[x+2]))
+                if hand[x] in triple:
+                    continue
+                pair.extend((hand[x], hand[x+1]))
+        if len(pair) > 4:
+            pair.pop(0)
+            pair.pop(0)
+        if len(triple) > 3:
+            triple.pop(0)
+            triple.pop(0)
+            triple.pop(0)
+        return pair, triple, quad
+
+    def is_straight_straightflush(self, hand):
+        straight, straight_flush = [], []
+        for x in range(3):
+            if hand[x+4][0] - hand[x+3][0] == 1:
+                if hand[x+3][0] - hand[x+2][0] == 1:
+                    if hand[x+2][0] - hand[x+1][0] == 1:
+                        if hand[x+1][0] - hand[x][0] == 1:
+                            straight = [hand[x], hand[x+1], hand[x+2],
+                                        hand[x+3], hand[x+4]]
+                            if self.is_flush(straight):
+                                straight_flush = straight
+        return straight, straight_flush
