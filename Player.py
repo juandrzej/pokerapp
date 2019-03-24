@@ -70,10 +70,11 @@ class Player:
             self.hand_power.append(triple[-1])
             return f'Full house: {triple}'
         elif flush:
+            flush.sort(reverse=True)
             while len(flush) > 5:
-                flush.pop(0)
+                flush.pop()
             self.hand_power.append(5)
-            self.hand_power.append(flush[-1])
+            self.hand_power.extend(flush)
             return f'Flush: {flush}'
         elif straight:
             self.hand_power.append(4)
@@ -151,15 +152,19 @@ class Player:
                         quad.extend((hand[x], hand[x+1], hand[x+2], hand[x+3]))
                         break
                     triple.extend((hand[x], hand[x+1], hand[x+2]))
-                if hand[x] in triple:
+                if hand[x] in triple or hand[x] in quad:
                     continue
                 pair.extend((hand[x], hand[x+1]))
         if len(pair) > 4:
             pair.pop(0)
             pair.pop(0)
-        if len(triple) > 3:
+        if len(triple) > 3 and pair:
             triple.pop(0)
             triple.pop(0)
+            triple.pop(0)
+        elif len(triple) > 3:
+            pair.append(triple.pop(0))
+            pair.append(triple.pop(0))
             triple.pop(0)
         return pair, triple, quad
 
